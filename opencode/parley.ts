@@ -156,6 +156,60 @@ export default (async (_input: PluginInput, _options?: PluginOptions) => {
             required: ["tab_id"],
           },
         },
+        {
+          name: "browser_read_dom",
+          description:
+            "Read the visible text of a whole page, or of a CSS selector. Generic - works on ANY website (news, docs, dashboards), not just AI chats.",
+          parameters: {
+            type: "object",
+            properties: {
+              tab_id: { type: "string", description: "Tab ID from browser_list_tabs" },
+              selector: { type: "string", description: "Optional CSS selector; omit for the whole page" },
+            },
+            required: ["tab_id"],
+          },
+        },
+        {
+          name: "browser_extract",
+          description:
+            "Extract text (or an attribute like href) from ALL elements matching a CSS selector. Great for scraping lists, tables, and links. Returns {count, items}.",
+          parameters: {
+            type: "object",
+            properties: {
+              tab_id: { type: "string", description: "Tab ID from browser_list_tabs" },
+              selector: { type: "string", description: "CSS selector to match" },
+              attr: { type: "string", description: "Optional attribute name (e.g. href); omit for text" },
+            },
+            required: ["tab_id", "selector"],
+          },
+        },
+        {
+          name: "browser_wait_for",
+          description:
+            "Wait until an element matching a CSS selector appears in a tab.",
+          parameters: {
+            type: "object",
+            properties: {
+              tab_id: { type: "string", description: "Tab ID from browser_list_tabs" },
+              selector: { type: "string", description: "CSS selector to wait for" },
+              timeout_ms: { type: "number", description: "Max wait in ms (default: 10000)" },
+            },
+            required: ["tab_id", "selector"],
+          },
+        },
+        {
+          name: "browser_cookies",
+          description:
+            "List cookies for a tab via CDP, INCLUDING HttpOnly session cookies that JavaScript cannot read. Optionally filter by domain. Treat returned values as secrets.",
+          parameters: {
+            type: "object",
+            properties: {
+              tab_id: { type: "string", description: "Tab ID from browser_list_tabs" },
+              domain: { type: "string", description: "Optional domain filter (substring match)" },
+            },
+            required: ["tab_id"],
+          },
+        },
       ];
     },
 
@@ -227,6 +281,33 @@ export default (async (_input: PluginInput, _options?: PluginOptions) => {
           result = run(
             `poll ${args.tab_id} ${args.interval_ms || 2000}`,
             120000
+          );
+          break;
+
+        case "browser_read_dom":
+          result = run(
+            `read-dom ${args.tab_id}${args.selector ? ` "${String(args.selector).replace(/"/g, '\\"')}"` : ""}`,
+            20000
+          );
+          break;
+
+        case "browser_extract":
+          result = run(
+            `extract ${args.tab_id} "${String(args.selector).replace(/"/g, '\\"')}"${args.attr ? ` "${args.attr}"` : ""}`,
+            20000
+          );
+          break;
+
+        case "browser_wait_for":
+          result = run(
+            `wait-for ${args.tab_id} "${String(args.selector).replace(/"/g, '\\"')}" ${args.timeout_ms || 10000}`,
+            (Number(args.timeout_ms) || 10000) + 5000
+          );
+          break;
+
+        case "browser_cookies":
+          result = run(
+            `cookies ${args.tab_id}${args.domain ? ` "${args.domain}"` : ""}`
           );
           break;
 

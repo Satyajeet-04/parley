@@ -2,9 +2,9 @@
 
 # Parley
 
-**Let the AI chats already open in your browser talk to each other — and to your coding agent.**
+**A lightweight CDP browser-automation framework with first-class AI workflow support.**
 
-Token-efficient browser automation for ChatGPT, Gemini, Claude, Grok and more, over the Chrome DevTools Protocol. Text-only, no screenshots, no vision tokens.
+Drive any website you're already logged into — read the DOM, fill forms, click, extract data, run JS — over the Chrome DevTools Protocol. Text-only, no screenshots, no vision tokens. Built-in workflows let the AI chats already open in your browser talk to each other and to your coding agent.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -23,8 +23,11 @@ It also does the boring-but-hard part right: it **waits for streaming responses 
 
 > The name comes from the French *parler*, "to speak" — a *parley* is a conversation between two sides. That is exactly what this does: it lets two AIs (or an AI and your agent) hold a conversation.
 
+Under the hood the core CDP engine is fully general-purpose — AI chat automation is just one workflow built on top of it. You can point the same primitives at news sites, dashboards, documentation, or internal web apps.
+
 ## Features
 
+- **General-purpose CDP engine** — `read-dom`, `extract`, `click`, `type`, `navigate`, `wait-for`, `eval`, and cookie access work on **any** website.
 - **Token-efficient** — text extraction only, never screenshots.
 - **Universal DOM discovery** — finds the input box and latest response without brittle per-site CSS selectors, with tuned fast-paths for ChatGPT, Gemini, Claude and Grok.
 - **Reliable streaming detection** — a `MutationObserver` returns the response only once it stops changing, so you never grab a partial answer.
@@ -48,6 +51,26 @@ It also does the boring-but-hard part right: it **waits for streaming responses 
                                           CLI usage      MCP server      opencode plugin
                                                       (parley_mcp.py)    (opencode/parley.ts)
 ```
+
+## Architecture
+
+Parley is organized in three layers so the generic engine stays independent of any site-specific knowledge:
+
+```
+parley/
+├── core.py            Core CDP engine — connection, DOM, JS eval, input,
+│                      navigation, wait_for, cookies. Knows nothing about AI sites.
+├── adapters/          Per-site knowledge (selectors, quirks)
+│   ├── base.py          SiteAdapter base class + URL matching
+│   ├── chatgpt.py       Gemini / Claude / Grok / Generic adapters
+│   ├── gemini.py        …
+│   ├── generic.py       fallback for any website
+│   └── js.py            injected JS (universal DOM discovery, MutationObserver)
+└── workflows.py       AI workflows on top: send, send_and_wait, wait_stream,
+                       poll, bridge, robust_send (Gemini stuck-state recovery)
+```
+
+`parley.py` (root), `parley_mcp.py`, and `opencode/parley.ts` are all thin layers over these three modules.
 
 ## Install
 
@@ -112,6 +135,24 @@ python3 parley.py bridge <CHATGPT_TAB_ID> <GEMINI_TAB_ID> 3
 | `navigate <tab> <url>` | Navigate a tab to a URL |
 | `eval <tab> <js>` | Run JavaScript and return the result |
 | `bridge <from> <to> [rounds]` | Relay a conversation between two tabs |
+| `read-dom <tab> [selector]` | Read page/element text — works on **any** site |
+| `extract <tab> <selector> [attr]` | Extract text/attribute from all matches (scraping) |
+| `wait-for <tab> <selector> [timeout_ms]` | Wait for an element to appear |
+| `cookies <tab> [domain]` | List cookies (incl. HttpOnly) via CDP |
+| `set-cookie <tab> <name> <value> <domain> [path]` | Set a cookie |
+
+### Generic automation example
+
+```bash
+# Scrape all links off a page
+python3 parley.py extract <TAB_ID> "a" href
+
+# Read an article's body text
+python3 parley.py read-dom <TAB_ID> "article"
+
+# Reuse a logged-in session elsewhere (handle cookies as secrets!)
+python3 parley.py cookies <TAB_ID> github.com
+```
 
 **Configuration** (environment variables):
 
@@ -139,7 +180,7 @@ Parley ships an MCP server so any MCP client can drive your browser. Add it to y
 - **Cursor:** `.cursor/mcp.json`
 - **opencode:** add under `mcp` in `opencode.json` (or use the native plugin below)
 
-Tools exposed: `list_tabs`, `read`, `send`, `send_wait`, `wait_stream`, `type`, `click`, `navigate`, `eval`, `bridge`.
+Tools exposed: `list_tabs`, `read`, `send`, `send_wait`, `wait_stream`, `type`, `click`, `navigate`, `eval`, `bridge`, `read_dom`, `extract`, `wait_for`, `cookies`.
 
 ## Usage (opencode plugin)
 
@@ -185,9 +226,20 @@ python3 parley.py bridge <CHATGPT_ID> <GEMINI_ID> 4
 
 Contributions are very welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Adding support for a new AI site is usually just a few selectors.
 
+## Responsible use
+
+Parley is a general-purpose automation tool. With great DOM access comes real responsibility:
+
+- **Respect Terms of Service & robots policies.** Automating a site — especially private APIs or bulk scraping — may violate its terms even when it's your own logged-in session.
+- **Rate-limit yourself.** Don't hammer sites; add delays and cap request volume.
+- **Cookies are credentials.** `cookies` can read HttpOnly session tokens. Anyone with them can impersonate your login. Never log, print into shared transcripts, or commit them. Store only in memory or a permission-locked, git-ignored file.
+- **Mind privacy & data laws.** Only collect data you're allowed to, and handle personal data lawfully.
+
+You are responsible for how you use it.
+
 ## Disclaimer
 
-Parley automates *your own* logged-in browser sessions locally. Respect the Terms of Service of each site you automate. This project is not affiliated with OpenAI, Google, Anthropic, or xAI.
+Parley automates *your own* logged-in browser sessions locally. This project is not affiliated with OpenAI, Google, Anthropic, or xAI.
 
 ## License
 

@@ -28,7 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARLEY = os.path.join(HERE, "parley.py")
 
 PROTOCOL_VERSION = "2024-11-05"
-SERVER_INFO = {"name": "parley", "version": "1.0.0"}
+SERVER_INFO = {"name": "parley", "version": "1.1.0"}
 
 # Tool name -> (parley subcommand, [ordered arg names], {defaults}, timeout_s)
 TOOLS = [
@@ -184,6 +184,78 @@ TOOLS = [
             "required": ["tab_from", "tab_to"],
         },
         "timeout": 300,
+    },
+    {
+        "name": "read_dom",
+        "description": (
+            "Read the visible text (innerText) of an entire page, or of a specific "
+            "CSS selector. Generic - works on ANY website, not just AI chats."
+        ),
+        "cmd": "read-dom",
+        "args": ["tab_id", "selector"],
+        "schema": {
+            "type": "object",
+            "properties": {
+                "tab_id": {"type": "string", "description": "Tab ID from list_tabs"},
+                "selector": {"type": "string", "description": "Optional CSS selector; omit for whole page"},
+            },
+            "required": ["tab_id"],
+        },
+        "timeout": 20,
+    },
+    {
+        "name": "extract",
+        "description": (
+            "Extract text (or an attribute) from ALL elements matching a CSS "
+            "selector. Great for scraping lists, tables, links. Returns {count, items}."
+        ),
+        "cmd": "extract",
+        "args": ["tab_id", "selector", "attr"],
+        "schema": {
+            "type": "object",
+            "properties": {
+                "tab_id": {"type": "string", "description": "Tab ID from list_tabs"},
+                "selector": {"type": "string", "description": "CSS selector to match"},
+                "attr": {"type": "string", "description": "Optional attribute name (e.g. href); omit for text"},
+            },
+            "required": ["tab_id", "selector"],
+        },
+        "timeout": 20,
+    },
+    {
+        "name": "wait_for",
+        "description": "Wait until an element matching a CSS selector appears in a tab.",
+        "cmd": "wait-for",
+        "args": ["tab_id", "selector", "timeout_ms"],
+        "schema": {
+            "type": "object",
+            "properties": {
+                "tab_id": {"type": "string", "description": "Tab ID from list_tabs"},
+                "selector": {"type": "string", "description": "CSS selector to wait for"},
+                "timeout_ms": {"type": "integer", "description": "Max wait in ms (default 10000)"},
+            },
+            "required": ["tab_id", "selector"],
+        },
+        "timeout": 30,
+    },
+    {
+        "name": "cookies",
+        "description": (
+            "List cookies for a tab via CDP - INCLUDING HttpOnly session cookies "
+            "that JavaScript cannot read. Optionally filter by domain. Handle the "
+            "returned values as secrets."
+        ),
+        "cmd": "cookies",
+        "args": ["tab_id", "domain"],
+        "schema": {
+            "type": "object",
+            "properties": {
+                "tab_id": {"type": "string", "description": "Tab ID from list_tabs"},
+                "domain": {"type": "string", "description": "Optional domain filter (substring match)"},
+            },
+            "required": ["tab_id"],
+        },
+        "timeout": 15,
     },
 ]
 
