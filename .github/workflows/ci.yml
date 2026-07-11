@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Syntax check
+        run: |
+          python -c "import ast; ast.parse(open('parley.py').read())"
+          python -c "import ast; ast.parse(open('parley_mcp.py').read())"
+      - name: Import / compile check
+        run: python -m py_compile parley.py parley_mcp.py
