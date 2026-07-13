@@ -25,6 +25,36 @@ It also does the boring-but-hard part right: it **waits for streaming responses 
 
 Under the hood the core CDP engine is fully general-purpose — AI chat automation is just one workflow built on top of it. You can point the same primitives at news sites, dashboards, documentation, or internal web apps.
 
+### Demo: AI-to-AI Bridge
+
+```
+$ python3 parley.py send-wait <gemini_tab> "What is the capital of France?" 60000
+{
+  "send_method": "gemini",
+  "response_text": "The capital of France is Paris.",
+  "response_complete": true,
+  "duration_ms": 5312
+}
+
+$ python3 parley.py bridge <chatgpt_tab> <gemini_tab> 1
+{
+  "round": 1,
+  "source_text": "The capital of France is Paris.",
+  "target_text": "That's correct! Paris is the capital of France...",
+  "target_complete": true,
+  "duration_ms": 8241
+}
+
+$ python3 parley.py cookies <gemini_tab> gemini.google.com
+{
+  "count": 3,
+  "cookies": [
+    {"name": "COMPASS", "value": "...", "httpOnly": true, "secure": true},
+    {"name": "NID",     "value": "...", "httpOnly": true, "secure": true}
+  ]
+}
+```
+
 ## Features
 
 - **General-purpose CDP engine** — `read-dom`, `extract`, `click`, `type`, `navigate`, `wait-for`, `eval`, and cookie access work on **any** website.
@@ -35,6 +65,28 @@ Under the hood the core CDP engine is fully general-purpose — AI chat automati
 - **Self-healing** — auto-reconnects dropped CDP sockets and recovers Gemini's "stuck send button" state via a targeted reload that preserves history.
 - **Three ways to use it** — a plain CLI, an [MCP](https://modelcontextprotocol.io) server (Claude Desktop / Cursor / opencode / any MCP client), and a native opencode plugin.
 - **Zero heavy deps** — one small dependency (`websocket-client`). No Playwright, no Puppeteer, no headless Chrome download.
+
+### Generic Automation (any website)
+
+```bash
+# Extract all headings from a page
+python3 parley.py extract <tab_id> h2
+
+# Read a specific DOM element
+python3 parley.py read-dom <tab_id> ".main-content"
+
+# Run any JS and get the result
+python3 parley.py eval <tab_id> "document.querySelectorAll('a[href]').length"
+
+# Extract session cookies for authenticated API calls
+python3 parley.py cookies <tab_id> api.example.com
+
+# Click a button
+python3 parley.py click <tab_id> "button[data-testid='submit']"
+
+# Wait for an element to appear (up to 10s)
+python3 parley.py wait-for <tab_id> ".result-loaded"
+```
 
 ## How it works
 
