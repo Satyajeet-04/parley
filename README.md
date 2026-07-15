@@ -10,8 +10,22 @@ Drive any website you're already logged into — read the DOM, fill forms, click
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-compatible-6E56CF.svg)](https://modelcontextprotocol.io)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub stars](https://img.shields.io/github/stars/Satyajeet-04/parley?style=social)](https://github.com/Satyajeet-04/parley/stargazers)
 
 </div>
+
+<p align="center">
+  <a href="https://github.com/Satyajeet-04/parley/stargazers">
+    <img src="docs/bridge-demo.svg" alt="Parley bridges two AIs in real time" width="620"/>
+  </a>
+</p>
+
+<p align="center">
+  <b>⭐ If Parley saved you tokens or time, please star the repo — it helps other developers find it.</b><br/>
+  <a href="https://github.com/Satyajeet-04/parley/stargazers">Star Parley on GitHub</a>
+</p>
+
+---
 
 ---
 

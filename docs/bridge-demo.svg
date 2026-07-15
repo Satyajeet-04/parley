@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="380" viewBox="0 0 820 380" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1117"/>
+      <stop offset="1" stop-color="#161b22"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#7ee787"/>
+    </marker>
+    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#58a6ff"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="380" rx="14" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="410" y="34" fill="#e6edf3" font-size="18" font-weight="700" text-anchor="middle">parley.py bridge &#8596; two AIs talk in real time</text>
+
+  <!-- ChatGPT card -->
+  <g>
+    <rect x="24" y="70" width="220" height="150" rx="10" fill="#1c2128" stroke="#2ea043" stroke-width="2"/>
+    <text x="44" y="96" fill="#3fb950" font-size="13" font-weight="700">ChatGPT</text>
+    <rect x="40" y="108" width="150" height="34" rx="6" fill="#0d1117"/>
+    <text x="50" y="130" fill="#adbac7" font-size="11">Tabs &gt; spaces. One</text>
+    <text x="50" y="144" fill="#adbac7" font-size="11">paragraph.</text>
+    <rect x="40" y="152" width="188" height="52" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="50" y="172" fill="#e6edf3" font-size="10">Strong take. But spaces</text>
+    <text x="50" y="186" fill="#e6edf3" font-size="10">win on diffing &amp; alignment.</text>
+    <text x="50" y="200" fill="#8b949e" font-size="9" fill-opacity="0.8">&#8230; streaming done</text>
+  </g>
+
+  <!-- Gemini card -->
+  <g>
+    <rect x="576" y="70" width="220" height="150" rx="10" fill="#1c2128" stroke="#1f6feb" stroke-width="2"/>
+    <text x="596" y="96" fill="#58a6ff" font-size="13" font-weight="700">Gemini</text>
+    <rect x="592" y="108" width="188" height="52" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="602" y="128" fill="#e6edf3" font-size="10">Agreed on diffs, yet tabs</text>
+    <text x="602" y="142" fill="#e6edf3" font-size="10">preserve context locally</text>
+    <text x="602" y="156" fill="#8b949e" font-size="9" fill-opacity="0.8">&#8230; streaming done</text>
+    <rect x="592" y="172" width="160" height="34" rx="6" fill="#0d1117"/>
+    <text x="602" y="194" fill="#adbac7" font-size="11">Fair point &#8212; nuance</text>
+    <text x="602" y="208" fill="#adbac7" font-size="11">matters.</text>
+  </g>
+
+  <!-- Animated message arrows -->
+  <path d="M250,150 C400,90 420,90 574,150" fill="none" stroke="#2ea043" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#arrow)">
+    <animate attributeName="stroke-dashoffset" from="28" to="0" dur="1.2s" repeatCount="indefinite"/>
+  </path>
+  <path d="M574,170 C420,230 400,230 250,170" fill="none" stroke="#1f6feb" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#arrow2)">
+    <animate attributeName="stroke-dashoffset" from="28" to="0" dur="1.2s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- Terminal -->
+  <g>
+    <rect x="270" y="240" width="280" height="118" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+    <circle cx="288" cy="258" r="5" fill="#ff5f56"/>
+    <circle cx="304" cy="258" r="5" fill="#ffbd2e"/>
+    <circle cx="320" cy="258" r="5" fill="#27c93f"/>
+    <text x="284" y="284" fill="#7ee787" font-size="11">$ python3 parley.py bridge \</text>
+    <text x="296" y="302" fill="#7ee787" font-size="11">    &lt;CHATGPT&gt; &lt;GEMINI&gt; 3</text>
+    <text x="284" y="324" fill="#adbac7" font-size="10">round 1 &#8230; target_complete: true</text>
+    <text x="284" y="342" fill="#adbac7" font-size="10">round 2 &#8230; target_complete: true</text>
+    <text x="284" y="360" fill="#58a6ff" font-size="10">done in 18.4s &#183; 0 screenshots</text>
+    <rect x="284" y="350" width="7" height="13" fill="#e6edf3">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>
